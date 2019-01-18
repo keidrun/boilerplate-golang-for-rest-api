@@ -1,4 +1,4 @@
-module github.com/keidrun/boilerplate-golang-for-rest-api
+module github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible

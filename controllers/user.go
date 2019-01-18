@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/keidrun/boilerplate-golang-for-rest-api/utils"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/utils"
 )
 
 func (c Controller) GetUsers() http.HandlerFunc {

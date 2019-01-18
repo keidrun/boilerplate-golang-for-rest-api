@@ -1,4 +1,4 @@
-package main // import "github.com/keidrun/boilerplate-golang-for-rest-api"
+package main // import "github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt"
 
 import (
 	"database/sql"
@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/keidrun/boilerplate-golang-for-rest-api/controllers"
-	"github.com/keidrun/boilerplate-golang-for-rest-api/driver"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/controllers"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/driver"
 
 	"github.com/subosito/gotenv"
 

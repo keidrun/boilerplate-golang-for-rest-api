@@ -1,3 +1,3 @@
-# boilerplate-golang-for-rest-api
+# boilerplate-gorilla-mux-for-rest-api-with-jwt
 
-Boilerplate of Gorilla Mux for REST API.
+Boilerplate of Gorilla Mux for REST API with JWT.

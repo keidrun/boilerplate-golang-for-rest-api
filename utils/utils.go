@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/keidrun/boilerplate-golang-for-rest-api/models"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 

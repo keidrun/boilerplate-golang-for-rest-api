@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/keidrun/boilerplate-golang-for-rest-api/models"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
 )
 
 func (u UserRepository) Signup(db *sql.DB, user models.User) (models.User, error) {

@@ -9,9 +9,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/keidrun/boilerplate-golang-for-rest-api/models"
-	userRepository "github.com/keidrun/boilerplate-golang-for-rest-api/repository/user"
-	"github.com/keidrun/boilerplate-golang-for-rest-api/utils"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
+	userRepository "github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/repository/user"
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/utils"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
