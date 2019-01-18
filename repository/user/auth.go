@@ -7,10 +7,8 @@ import (
 	"github.com/keidrun/boilerplate-golang-for-rest-api/models"
 )
 
-type UserRepository struct{}
-
 func (u UserRepository) Signup(db *sql.DB, user models.User) (models.User, error) {
-	err := db.QueryRow("insert into users (email, password) values($1, $2) RETURNING id;", user.Email, user.Password).Scan(&user.ID)
+	err := db.QueryRow("insert into users (email, password, name, age, gender) values($1, $2, $3, $4, $5) RETURNING id;", user.Email, user.Password, user.Name, user.Age, user.Gender).Scan(&user.ID)
 
 	if err != nil {
 		log.Println(err)
@@ -22,8 +20,9 @@ func (u UserRepository) Signup(db *sql.DB, user models.User) (models.User, error
 }
 
 func (u UserRepository) Login(db *sql.DB, user models.User) (models.User, error) {
-	row := db.QueryRow("select * from users where email=$1", user.Email)
-	err := row.Scan(&user.ID, &user.Email, &user.Password)
+
+	row := db.QueryRow("select id,email,password,name,age,gender from users where email=$1", user.Email)
+	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Age, &user.Gender)
 
 	if err != nil {
 		log.Println(err)

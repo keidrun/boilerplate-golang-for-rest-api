@@ -23,6 +23,7 @@ func Respond(w http.ResponseWriter, data interface{}) {
 }
 
 func ComparePasswords(hashedPassword string, password []byte) bool {
+
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), password)
 
 	if err != nil {

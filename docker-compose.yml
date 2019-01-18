@@ -3,19 +3,26 @@ version: '3'
 services:
   app:
     container_name: my_app
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     env_file:
       - .env
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
     depends_on:
-    - db
-
+      - db
+    command: >
+      bash -c "chmod +x ./wait-for-it.sh &&
+        ./wait-for-it.sh db:5432 -t 30 -- fresh main.go"
   db:
     container_name: my_postgres
     image: postgres:11.1
     restart: always
     environment:
+      - "TZ: Etc/UTC"
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres_password
       - POSTGRES_DB=testdb

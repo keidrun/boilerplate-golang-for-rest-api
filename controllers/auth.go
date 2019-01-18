@@ -35,6 +35,12 @@ func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		if user.Name == "" {
+			error.Message = "Name is missing."
+			utils.RespondWithError(w, http.StatusBadRequest, error)
+			return
+		}
+
 		hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 
 		if err != nil {
@@ -86,28 +92,28 @@ func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 
 		userRepo := userRepository.UserRepository{}
 		user, err := userRepo.Login(db, user)
-
 		if err != nil {
 			if err == sql.ErrNoRows {
 				error.Message = "The user does not exist"
 				utils.RespondWithError(w, http.StatusBadRequest, error)
 				return
 			}
+			log.Fatal(err)
+			error.Message = "Server error"
+			utils.RespondWithError(w, http.StatusInternalServerError, error)
+			return
+		}
+
+		token, err := utils.GenerateToken(user)
+		if err != nil {
+			log.Fatal(err)
 			error.Message = "Server error"
 			utils.RespondWithError(w, http.StatusInternalServerError, error)
 			return
 		}
 
 		hashedPassword := user.Password
-
-		token, err := utils.GenerateToken(user)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		isValidPassword := utils.ComparePasswords(hashedPassword, []byte(password))
-
 		if isValidPassword {
 			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Type", "application/json")
