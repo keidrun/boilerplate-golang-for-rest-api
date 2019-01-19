@@ -20,51 +20,45 @@ import (
 func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user models.User
-		var error models.Error
+		var errorObj models.Error
 		json.NewDecoder(r.Body).Decode(&user)
 
 		if user.Email == "" {
-			error.Message = "Email is missing"
-			utils.RespondWithError(w, http.StatusBadRequest, error)
+			errorObj.Message = "Email is missing"
+			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
 
 		if user.Password == "" {
-			error.Message = "Password is missing"
-			utils.RespondWithError(w, http.StatusBadRequest, error)
+			errorObj.Message = "Password is missing"
+			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
 
 		if user.Name == "" {
-			error.Message = "Name is missing."
-			utils.RespondWithError(w, http.StatusBadRequest, error)
+			errorObj.Message = "Name is missing."
+			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
 
 		hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-
 		if err != nil {
-			error.Message = "Something went wrong when generating token"
-			utils.RespondWithError(w, http.StatusBadRequest, error)
+			errorObj.Message = "Something went wrong when generating token"
+			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
-
 		user.Password = string(hash)
 
 		userRepo := userRepository.UserRepository{}
 		user, err = userRepo.Signup(db, user)
 
 		if err != nil {
-			error.Message = "Server error"
-			utils.RespondWithError(w, http.StatusInternalServerError, error)
+			errorObj.Message = "Server error"
+			utils.Failure(w, http.StatusInternalServerError, errorObj)
 			return
 		}
 
-		user.Password = ""
-
-		w.Header().Set("Content-Type", "application/json")
-
-		utils.Respond(w, user)
+		utils.Success(w, user)
 	}
 }
 
@@ -72,19 +66,19 @@ func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user models.User
 		var jwt models.JWT
-		var error models.Error
+		var errorObj models.Error
 
 		json.NewDecoder(r.Body).Decode(&user)
 
 		if user.Email == "" {
-			error.Message = "Email is missing."
-			utils.RespondWithError(w, http.StatusBadRequest, error)
+			errorObj.Message = "\"email\" is missing."
+			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
 
 		if user.Password == "" {
-			error.Message = "Password is missing."
-			utils.RespondWithError(w, http.StatusBadRequest, error)
+			errorObj.Message = "\"password\" is missing."
+			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
 
@@ -94,46 +88,43 @@ func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 		user, err := userRepo.Login(db, user)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				error.Message = "The user does not exist"
-				utils.RespondWithError(w, http.StatusBadRequest, error)
+				errorObj.Message = "The user does not exist"
+				utils.Failure(w, http.StatusBadRequest, errorObj)
 				return
 			}
-			log.Fatal(err)
-			error.Message = "Server error"
-			utils.RespondWithError(w, http.StatusInternalServerError, error)
+			log.Println(err)
+			errorObj.Message = "Server error"
+			utils.Failure(w, http.StatusInternalServerError, errorObj)
 			return
 		}
 
 		token, err := utils.GenerateToken(user)
 		if err != nil {
-			log.Fatal(err)
-			error.Message = "Server error"
-			utils.RespondWithError(w, http.StatusInternalServerError, error)
+			log.Println(err)
+			errorObj.Message = "Server error"
+			utils.Failure(w, http.StatusInternalServerError, errorObj)
 			return
 		}
 
 		hashedPassword := user.Password
 		isValidPassword := utils.ComparePasswords(hashedPassword, []byte(password))
 		if isValidPassword {
-			w.WriteHeader(http.StatusOK)
-			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Authorization", token)
-
 			jwt.Token = token
-			utils.Respond(w, jwt)
+			utils.Success(w, jwt)
 		} else {
-			error.Message = "Invalid Password."
-			utils.RespondWithError(w, http.StatusUnauthorized, error)
+			errorObj.Message = "Invalid password."
+			utils.Failure(w, http.StatusUnauthorized, errorObj)
 		}
 	}
 }
 
 func (c Controller) TokenVerifyMiddleWare(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var errorObject models.Error
+		var errorObj models.Error
+
 		authHeader := r.Header.Get("Authorization")
 		bearerToken := strings.Split(authHeader, " ")
-
 		if len(bearerToken) == 2 {
 			authToken := bearerToken[1]
 
@@ -145,21 +136,21 @@ func (c Controller) TokenVerifyMiddleWare(next http.HandlerFunc) http.HandlerFun
 			})
 
 			if err != nil {
-				errorObject.Message = err.Error()
-				utils.RespondWithError(w, http.StatusUnauthorized, errorObject)
+				errorObj.Message = err.Error()
+				utils.Failure(w, http.StatusUnauthorized, errorObj)
 				return
 			}
 
 			if token.Valid {
 				next.ServeHTTP(w, r)
 			} else {
-				errorObject.Message = err.Error()
-				utils.RespondWithError(w, http.StatusUnauthorized, errorObject)
+				errorObj.Message = err.Error()
+				utils.Failure(w, http.StatusUnauthorized, errorObj)
 				return
 			}
 		} else {
-			errorObject.Message = "Invalid token"
-			utils.RespondWithError(w, http.StatusUnauthorized, errorObject)
+			errorObj.Message = "Invalid token"
+			utils.Failure(w, http.StatusUnauthorized, errorObj)
 			return
 		}
 	})

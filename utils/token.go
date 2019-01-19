@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
@@ -13,19 +11,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func RespondWithError(w http.ResponseWriter, status int, error models.Error) {
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(error)
-}
-
-func Respond(w http.ResponseWriter, data interface{}) {
-	json.NewEncoder(w).Encode(data)
-}
-
 func ComparePasswords(hashedPassword string, password []byte) bool {
-
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), password)
-
 	if err != nil {
 		log.Println(err)
 		return false
@@ -44,9 +31,8 @@ func GenerateToken(user models.User) (string, error) {
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))
-
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return tokenString, err
 	}
 
