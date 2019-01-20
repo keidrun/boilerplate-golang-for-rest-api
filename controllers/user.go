@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
@@ -40,15 +39,10 @@ func (c Controller) GetUser(db *sql.DB) http.HandlerFunc {
 		var errorObj models.Error
 
 		params := mux.Vars(r)
-		id, err := strconv.Atoi(params["id"])
-		if err != nil {
-			errorObj.Message = "\"id\" is wrong"
-			utils.Failure(w, http.StatusBadRequest, errorObj)
-			return
-		}
+		id := params["id"]
 
 		userRepo := userRepository.UserRepository{}
-		user, err = userRepo.GetUser(db, user, id)
+		user, err := userRepo.GetUser(db, user, id)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				errorObj.Message = "The user does not exist"
@@ -113,12 +107,7 @@ func (c Controller) UpdateUser(db *sql.DB) http.HandlerFunc {
 		var errorObj models.Error
 
 		params := mux.Vars(r)
-		id, err := strconv.Atoi(params["id"])
-		if err != nil {
-			errorObj.Message = "\"id\" is wrong"
-			utils.Failure(w, http.StatusBadRequest, errorObj)
-			return
-		}
+		id := params["id"]
 
 		json.NewDecoder(r.Body).Decode(&user)
 		if user.Password != "" {
@@ -154,12 +143,7 @@ func (c Controller) RemoveUser(db *sql.DB) http.HandlerFunc {
 		var errorObj models.Error
 
 		params := mux.Vars(r)
-		id, err := strconv.Atoi(params["id"])
-		if err != nil {
-			errorObj.Message = "\"id\" is wrong"
-			utils.Failure(w, http.StatusBadRequest, errorObj)
-			return
-		}
+		id := params["id"]
 
 		userRepo := userRepository.UserRepository{}
 		rowsDeleted, err := userRepo.RemoveUser(db, id)

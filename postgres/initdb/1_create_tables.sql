@@ -1,6 +1,8 @@
+create extension pgcrypto;
+
 create table users
 (
-  id serial primary key,
+  id uuid primary key default gen_random_uuid(),
   email text not null UNIQUE,
   password text not null,
   name text not null,

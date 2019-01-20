@@ -3,7 +3,7 @@ package models
 import "encoding/json"
 
 type User struct {
-	ID       int        `json:"id"`
+	ID       string     `json:"id"`
 	Email    string     `json:"email"`
 	Password string     `json:"password,omitempty"`
 	Name     string     `json:"name,omitempty"`
@@ -13,7 +13,7 @@ type User struct {
 
 func (u User) MarshalJSON() ([]byte, error) {
 	var response struct {
-		ID     int        `json:"id"`
+		ID     string     `json:"id"`
 		Email  string     `json:"email"`
 		Name   string     `json:"name,omitempty"`
 		Age    NullInt64  `json:"age,omitempty"`
