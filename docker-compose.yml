@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    environment:
+      - APP_ENV=dev
     env_file:
       - .env
     ports:

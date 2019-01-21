@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/config"
+
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/controllers"
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/driver"
 
@@ -13,13 +15,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const port = 3000
-
 func init() {
 	gotenv.Load()
 }
 
 func main() {
+	conf := config.GetConfig()
+
 	db := driver.ConnectDB()
 	controller := controllers.Controller{}
 
@@ -33,6 +35,6 @@ func main() {
 	router.HandleFunc("/api/users/{id}", controller.TokenVerifyMiddleWare(controller.UpdateUser(db))).Methods("PUT")
 	router.HandleFunc("/api/users/{id}", controller.TokenVerifyMiddleWare(controller.RemoveUser(db))).Methods("DELETE")
 
-	log.Printf("Server up on port %v....\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), router))
+	log.Printf("Server up on port %v....\n", conf.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", conf.Port), router))
 }

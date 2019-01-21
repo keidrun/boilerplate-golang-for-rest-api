@@ -2,8 +2,8 @@ package utils
 
 import (
 	"log"
-	"os"
 
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/config"
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -22,12 +22,13 @@ func ComparePasswords(hashedPassword string, password []byte) bool {
 }
 
 func GenerateToken(user models.User) (string, error) {
+	conf := config.GetConfig()
 	var err error
-	secret := os.Getenv("SECRET")
+	secret := conf.JwtSecret
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": user.Email,
-		"iss":   os.Getenv("ISSUER"),
+		"iss":   conf.JwtIssuer,
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))

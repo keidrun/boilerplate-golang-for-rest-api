@@ -3,20 +3,19 @@ package driver
 import (
 	"database/sql"
 	"log"
-	"os"
 
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/config"
 	"github.com/lib/pq"
 )
 
-var db *sql.DB
-
 func ConnectDB() *sql.DB {
-	pgURL, err := pq.ParseURL(os.Getenv("POSTGRES_URL"))
+	conf := config.GetConfig()
+	pgURL, err := pq.ParseURL(conf.PostgresURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	db, err = sql.Open("postgres", pgURL)
+	db, err := sql.Open("postgres", pgURL)
 	if err != nil {
 		log.Fatal(err)
 	}

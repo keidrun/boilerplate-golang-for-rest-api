@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
+
+	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/config"
 
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
 	userRepository "github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/repository/user"
@@ -121,6 +122,7 @@ func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 
 func (c Controller) TokenVerifyMiddleWare(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conf := config.GetConfig()
 		var errorObj models.Error
 
 		authHeader := r.Header.Get("Authorization")
@@ -132,7 +134,7 @@ func (c Controller) TokenVerifyMiddleWare(next http.HandlerFunc) http.HandlerFun
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("Something went wrong when parsing token")
 				}
-				return []byte(os.Getenv("SECRET")), nil
+				return []byte(conf.JwtSecret), nil
 			})
 
 			if err != nil {
