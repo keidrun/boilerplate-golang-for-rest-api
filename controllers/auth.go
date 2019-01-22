@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 
+	userValidator "github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/validators/user"
+
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/config"
 
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
@@ -22,22 +24,17 @@ func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user models.User
 		var errorObj models.Error
+
 		json.NewDecoder(r.Body).Decode(&user)
 
-		if user.Email == "" {
-			errorObj.Message = "Email is missing"
-			utils.Failure(w, http.StatusBadRequest, errorObj)
-			return
-		}
-
-		if user.Password == "" {
-			errorObj.Message = "Password is missing"
-			utils.Failure(w, http.StatusBadRequest, errorObj)
-			return
-		}
-
-		if user.Name == "" {
-			errorObj.Message = "Name is missing."
+		validator := userValidator.Validator{}
+		errs := validator.ValidateAddUserRequest(user)
+		if len(errs) > 0 {
+			var serrs []string
+			for _, v := range errs {
+				serrs = append(serrs, fmt.Sprintf("%v", v))
+			}
+			errorObj.Message = strings.Join(serrs, ",")
 			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
@@ -52,14 +49,14 @@ func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 
 		userRepo := userRepository.UserRepository{}
 		user, err = userRepo.Signup(db, user)
-
 		if err != nil {
+			log.Println(err)
 			errorObj.Message = "Server error"
 			utils.Failure(w, http.StatusInternalServerError, errorObj)
 			return
 		}
 
-		utils.Success(w, user)
+		utils.SuccessWithStatus(w, http.StatusCreated, user)
 	}
 }
 
@@ -89,6 +86,7 @@ func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 		user, err := userRepo.Login(db, user)
 		if err != nil {
 			if err == sql.ErrNoRows {
+				log.Println(err)
 				errorObj.Message = "The user does not exist"
 				utils.Failure(w, http.StatusBadRequest, errorObj)
 				return

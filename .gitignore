@@ -1,3 +1,4 @@
+.vscode/
 tmp/
 postgres/data/
 *.test

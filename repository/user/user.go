@@ -2,7 +2,6 @@ package userRepository
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
 )
@@ -10,7 +9,6 @@ import (
 func (u UserRepository) GetUsers(db *sql.DB, user models.User, users []models.User) ([]models.User, error) {
 	rows, err := db.Query("select id,email,password,name,age,gender from users")
 	if err != nil {
-		log.Println(err)
 		return users, err
 	}
 
@@ -18,14 +16,12 @@ func (u UserRepository) GetUsers(db *sql.DB, user models.User, users []models.Us
 	for rows.Next() {
 		err := rows.Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Age, &user.Gender)
 		if err != nil {
-			log.Println(err)
 			return users, err
 		}
 
 		users = append(users, user)
 	}
 	if err := rows.Err(); err != nil {
-		log.Println(err)
 		return users, err
 	}
 
@@ -36,7 +32,6 @@ func (u UserRepository) GetUser(db *sql.DB, user models.User, id string) (models
 	rows := db.QueryRow("select id,email,password,name,age,gender from users where id=$1", id)
 	err := rows.Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Age, &user.Gender)
 	if err != nil {
-		log.Println(err)
 		return user, err
 	}
 
@@ -48,7 +43,6 @@ func (u UserRepository) AddUser(db *sql.DB, user models.User) (models.User, erro
 		"insert into users (email, password, name, age, gender) values($1, $2, $3, $4, $5) RETURNING id;",
 		user.Email, user.Password, user.Name, user.Age, user.Gender).Scan(&user.ID)
 	if err != nil {
-		log.Println(err)
 		return user, err
 	}
 
@@ -60,13 +54,11 @@ func (u UserRepository) UpdateUser(db *sql.DB, user models.User, id string) (int
 		"update users set email=$1, password=$2, name=$3, age=$4, gender=$5 where id=$6 RETURNING id",
 		&user.Email, &user.Password, &user.Name, &user.Age, &user.Gender, id)
 	if err != nil {
-		log.Println(err)
 		return 0, err
 	}
 
 	rowsUpdated, err := result.RowsAffected()
 	if err != nil {
-		log.Println(err)
 		return 0, err
 	}
 
@@ -76,13 +68,11 @@ func (u UserRepository) UpdateUser(db *sql.DB, user models.User, id string) (int
 func (u UserRepository) RemoveUser(db *sql.DB, id string) (int64, error) {
 	result, err := db.Exec("delete from users where id = $1", id)
 	if err != nil {
-		log.Println(err)
 		return 0, err
 	}
 
 	rowsDeleted, err := result.RowsAffected()
 	if err != nil {
-		log.Println(err)
 		return 0, err
 	}
 
