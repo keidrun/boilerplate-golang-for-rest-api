@@ -1,6 +1,8 @@
-package userValidator
+package uservalidator
 
 import (
+	"fmt"
+
 	"github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt/models"
 
 	validator "gopkg.in/go-playground/validator.v9"
@@ -14,7 +16,7 @@ type UpdateUserRequest struct {
 	Gender   models.NullString `validate:"omitempty,oneof=male female"`
 }
 
-func (v Validator) ValidateUpdateUserRequest(user models.User) []validator.FieldError {
+func (v Validator) ValidateUpdateUserRequest(user models.User) []string {
 	var target UpdateUserRequest
 	target.Email = user.Email
 	target.Password = user.Password
@@ -26,7 +28,11 @@ func (v Validator) ValidateUpdateUserRequest(user models.User) []validator.Field
 	err := validate.Struct(target)
 	if err != nil {
 		verrs := err.(validator.ValidationErrors)
-		return verrs
+		var serrs []string
+		for _, v := range verrs {
+			serrs = append(serrs, fmt.Sprintf("%v", v))
+		}
+		return serrs
 	}
-	return []validator.FieldError{}
+	return []string{}
 }

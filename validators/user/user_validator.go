@@ -1,4 +1,4 @@
-package userValidator
+package uservalidator
 
 import (
 	"database/sql/driver"

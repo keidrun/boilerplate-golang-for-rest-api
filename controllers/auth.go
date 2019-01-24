@@ -30,11 +30,7 @@ func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 		validator := userValidator.Validator{}
 		errs := validator.ValidateAddUserRequest(user)
 		if len(errs) > 0 {
-			var serrs []string
-			for _, v := range errs {
-				serrs = append(serrs, fmt.Sprintf("%v", v))
-			}
-			errorObj.Message = strings.Join(serrs, ",")
+			errorObj.Message = strings.Join(errs, ",")
 			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}

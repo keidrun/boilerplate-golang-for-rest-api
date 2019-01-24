@@ -3,7 +3,6 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -73,11 +72,7 @@ func (c Controller) AddUser(db *sql.DB) http.HandlerFunc {
 		validator := userValidator.Validator{}
 		errs := validator.ValidateAddUserRequest(user)
 		if len(errs) > 0 {
-			var serrs []string
-			for _, v := range errs {
-				serrs = append(serrs, fmt.Sprintf("%v", v))
-			}
-			errorObj.Message = strings.Join(serrs, ",")
+			errorObj.Message = strings.Join(errs, ",")
 			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
@@ -116,11 +111,7 @@ func (c Controller) UpdateUser(db *sql.DB) http.HandlerFunc {
 		validator := userValidator.Validator{}
 		errs := validator.ValidateUpdateUserRequest(user)
 		if len(errs) > 0 {
-			var serrs []string
-			for _, v := range errs {
-				serrs = append(serrs, fmt.Sprintf("%v", v))
-			}
-			errorObj.Message = strings.Join(serrs, ",")
+			errorObj.Message = strings.Join(errs, ",")
 			utils.Failure(w, http.StatusBadRequest, errorObj)
 			return
 		}
