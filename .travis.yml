@@ -1,0 +1,11 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker-compose up --build -d
+  - docker-compose ps
+  - docker-compose exec app go mod graph
+
+script:
+  - docker-compose exec app go test -cover ./...

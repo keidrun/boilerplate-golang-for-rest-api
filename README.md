@@ -1,4 +1,4 @@
-# boilerplate-gorilla-mux-for-rest-api-with-jwt [![License: MIT][license-image]][license-url]
+# boilerplate-gorilla-mux-for-rest-api-with-jwt [![Build Status][travis-image]][travis-url] [![License: MIT][license-image]][license-url]
 
 Boilerplate of Gorilla Mux for REST API with JWT
 
@@ -27,5 +27,7 @@ docker-compose up
 |   PUT    |  /api/users/{id} | email,password,name,age,gender |
 |  DELETE  |  /api/users/{id} |               -                |
 
+[travis-url]: https://travis-ci.org/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt
+[travis-image]: https://secure.travis-ci.org/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt.svg?branch=master
 [license-url]: https://opensource.org/licenses/MIT
 [license-image]: https://img.shields.io/badge/License-MIT-yellow.svg
