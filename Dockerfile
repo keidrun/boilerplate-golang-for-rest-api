@@ -1,5 +1,4 @@
 FROM golang:1.11.4-stretch AS builder
-LABEL maintainer="Keid"
 WORKDIR /app
 COPY go.mod .
 COPY go.sum .
@@ -8,6 +7,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o server
 
 FROM alpine:3.8
+LABEL maintainer="Keid"
 ENV APP_ENV=prod
 WORKDIR /app
 EXPOSE 3000

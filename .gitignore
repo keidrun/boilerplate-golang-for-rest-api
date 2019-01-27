@@ -1,5 +1,7 @@
-.vscode/
+.vscode/*
+!.vscode/launch.json
 tmp/
 postgres/data/
 *.test
 *.out
+debug

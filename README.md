@@ -12,8 +12,18 @@ Boilerplate of Gorilla Mux for REST API with JWT
 ```bash
 git clone https://github.com/keidrun/boilerplate-gorilla-mux-for-rest-api-with-jwt.git
 cd boilerplate-gorilla-mux-for-rest-api-with-jwt
-docker-compose up
+docker-compose up --build
 ```
+
+## Remote debugging with VSCode
+
+### 1. Run
+
+```bash
+docker-compose -f docker-compose.debug.yml up --build
+```
+
+### 2. Connect to Docker in VSCode
 
 ## Build and Run for production
 

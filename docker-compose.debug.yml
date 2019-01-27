@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  app:
+    container_name: my_app
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      - APP_ENV=dev
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+      - "2345:2345" # for debugging
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    security_opt: # avoid the error "could not launch process: fork/exec /app/debug: operation not permitted"
+      - "seccomp:unconfined"
+    command: >
+      bash -c "chmod +x ./wait-for-it.sh &&
+        ./wait-for-it.sh db:5433 -t 30 \
+        -- dlv debug --listen=:2345 --log --headless --accept-multiclient --api-version=2 \
+        -- main.go"
+  db:
+    container_name: my_postgres
+    image: postgres:11.1
+    restart: always
+    environment:
+      - "TZ: Etc/UTC"
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres_password
+      - POSTGRES_DB=testdb
+    ports:
+      - 5433:5432
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/initdb:/docker-entrypoint-initdb.d
