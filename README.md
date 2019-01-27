@@ -15,6 +15,13 @@ cd boilerplate-gorilla-mux-for-rest-api-with-jwt
 docker-compose up
 ```
 
+## Build and Run for production
+
+```bash
+docker build -t my_app_prod:latest .
+docker run --env-file=$PWD/.env my_app_prod:latest
+```
+
 ## API endpoints
 
 |  Method  |       URI        |             Data               |
